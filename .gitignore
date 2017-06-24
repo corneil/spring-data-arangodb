@@ -36,3 +36,6 @@ overridedb.*
 .factorypath
 dump.rdb
 transaction-logs
+!/.mvn/wrapper/maven-wrapper.jar
+!/.mvn/wrapper/maven-wrapper.properties
+!/src/main/resources/META-INF/MANIFEST.MF
