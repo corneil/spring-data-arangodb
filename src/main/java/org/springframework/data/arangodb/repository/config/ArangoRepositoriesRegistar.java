@@ -5,11 +5,11 @@ import java.lang.annotation.Annotation;
 import org.springframework.data.repository.config.RepositoryBeanDefinitionRegistrarSupport;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 
-public class ArangoDbRepositoriesRegistar extends RepositoryBeanDefinitionRegistrarSupport {
+public class ArangoRepositoriesRegistar extends RepositoryBeanDefinitionRegistrarSupport {
 
 	@Override
 	protected Class<? extends Annotation> getAnnotation() {
-		return EnableArangoDbRepositories.class;
+		return EnableArangoRepositories.class;
 	}
 
 	@Override

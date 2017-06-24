@@ -1,13 +1,8 @@
 language: java
 
-before_script:
-  - chmod 777 ./tests/travis/setup_arangodb.sh
-  - ./tests/travis/setup_arangodb.sh
-
 install: true
 
 jdk:
-  - oraclejdk7
   - oraclejdk8
 
 sudo: false
@@ -19,6 +14,3 @@ cache:
 install: true
 
 script: "mvn clean dependency:list test -Dsort"
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)

@@ -1,0 +1,4 @@
+# Tooling related information for the arangodb namespace
+http\://www.springframework.org/schema/arangodb@name=ArangoDB Namespace
+http\://www.springframework.org/schema/arangodb@prefix=arangodb
+http\://www.springframework.org/schema/arangodb@icon=org/springframework/data/arangodb/config/spring-arangodb.gif

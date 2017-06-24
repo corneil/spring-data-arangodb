@@ -1,0 +1,2 @@
+http\://www.springframework.org/schema/arangodb/spring-arangodb-1.0.xsd=org/springframework/data/arangodb/config/spring-arangodb-1.0.xsd
+http\://www.springframework.org/schema/arangodb/spring-arangodb.xsd=org/springframework/data/arangodb/config/spring-arangodb-1.0.xsd

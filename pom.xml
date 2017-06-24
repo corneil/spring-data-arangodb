@@ -1,21 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<groupId>org.springframework.data</groupId>
 	<artifactId>spring-data-arangodb</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
 	<parent>
 		<groupId>org.springframework.data.build</groupId>
 		<artifactId>spring-data-parent</artifactId>
-		<version>1.8.2.RELEASE</version>
+		<version>1.9.3.RELEASE</version>
 	</parent>
-
+	
 	<name>Spring Data ArangoDB</name>
 	<url>https://github.com/anderick/spring-data-arangodb</url>
 	<description>Provide support to use ArangoDB among the Spring Data concepts.</description>
-
+	
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -23,14 +22,13 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
+	
 	<properties>
 		<dist.key>ARANGODB</dist.key>
 		<bundlor.enabled>false</bundlor.enabled>
-
-		<springdata.commons>1.12.2.RELEASE</springdata.commons>
+		<springdata.commons>1.13.4.RELEASE</springdata.commons>
 	</properties>
-
+	
 	<developers>
 		<developer>
 			<id>anderick</id>
@@ -44,15 +42,22 @@
 			</roles>
 			<timezone>-3</timezone>
 		</developer>
+		<developer>
+			<id>corneil</id>
+			<name>Corneil du Plessis</name>
+			<email>corneil dot duplessis at gmail.com</email>
+			<organization>JumpCO</organization>
+			<timezone>-2</timezone>
+		</developer>
 	</developers>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-commons</artifactId>
 			<version>${springdata.commons}</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -65,21 +70,57 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.arangodb</groupId>
 			<artifactId>arangodb-java-driver</artifactId>
-			<version>3.0.0</version>
+			<version>4.2.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.arangodb</groupId>
+			<artifactId>velocypack-module-joda</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-ext</artifactId>
+			<version>RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.exparity</groupId>
+			<artifactId>hamcrest-date</artifactId>
+			<version>RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>RELEASE</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -94,14 +135,76 @@
 				<groupId>org.asciidoctor</groupId>
 				<artifactId>asciidoctor-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.21.0</version>
+				<configuration>
+					<showLogs>true</showLogs>
+					<images>
+						<image>
+							<name>arangodb/test</name>
+							<alias>arangodb-test</alias>
+							<build>
+								<from>arangodb:3.1</from>
+								<env>
+									<ARANGO_NO_AUTH>1</ARANGO_NO_AUTH>
+								</env>
+							</build>
+							<run>
+								<ports>
+									<port>arangodb.port:8529</port>
+								</ports>
+								<wait>
+									<time>10000</time>
+								</wait>
+							</run>
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<id>start</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.20</version>
+				<configuration>
+					<systemPropertyVariables>
+						<arangodb.port>${arangodb.port}</arangodb.port>
+						<arangodb.host>127.0.0.1</arangodb.host>
+					</systemPropertyVariables>
+					<includes>
+						<include>**/*IT.java</include>
+					</includes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
+	<repositories>
+		<repository>
+			<id>spring-libs-snapshot</id>
+			<url>https://repo.spring.io/libs-snapshot</url>
+		</repository>
+	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>spring-plugins-release</id>
 			<url>https://repo.spring.io/plugins-release</url>
 		</pluginRepository>
 	</pluginRepositories>
-
 </project>
