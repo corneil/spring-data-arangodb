@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = TestQueryConfig.class)
-public class ArangoQueryIT {
+public class ArangoQueryITest {
 	@Autowired
 	protected ArangoDBFactory dbFactory;
 
