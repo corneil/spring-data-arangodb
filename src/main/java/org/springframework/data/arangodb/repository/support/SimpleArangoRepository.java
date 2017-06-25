@@ -1,9 +1,7 @@
 package org.springframework.data.arangodb.repository.support;
 
 import org.springframework.data.arangodb.repository.ArangoRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public class SimpleArangoRepository<T> implements ArangoRepository<T> {
 	private ArangoOperations template;
 

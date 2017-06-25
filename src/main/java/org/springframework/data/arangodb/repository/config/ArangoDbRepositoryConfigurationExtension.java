@@ -4,15 +4,18 @@ import org.springframework.data.arangodb.repository.support.ArangoRepositoryFact
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 
 public class ArangoDbRepositoryConfigurationExtension extends RepositoryConfigurationExtensionSupport {
-
 	@Override
 	public String getRepositoryFactoryClassName() {
 		return ArangoRepositoryFactoryBean.class.getName();
 	}
 
 	@Override
+	public String getModuleName() {
+		return "ArangoDB";
+	}
+
+	@Override
 	protected String getModulePrefix() {
 		return "arangodb";
 	}
-
 }

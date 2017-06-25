@@ -1,7 +1,8 @@
 package org.springframework.data.arangodb.repository.support;
 
 import com.arangodb.entity.DocumentField;
-import lombok.extern.slf4j.XSlf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.arangodb.repository.Document;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
@@ -9,8 +10,9 @@ import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
 
-@XSlf4j
+
 public class ArangoEntityInformation<T> extends AbstractEntityInformation<T, String> {
+	private static final Logger log = LoggerFactory.getLogger(ArangoEntityInformation.class);
 	public String getCollectionName() {
 		return collectionName;
 	}

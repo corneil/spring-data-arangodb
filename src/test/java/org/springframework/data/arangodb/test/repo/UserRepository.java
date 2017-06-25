@@ -1,4 +1,4 @@
-package org.springframework.data.arangodb.test.basic;
+package org.springframework.data.arangodb.test.repo;
 
 import org.springframework.data.arangodb.repository.ArangoRepository;
 

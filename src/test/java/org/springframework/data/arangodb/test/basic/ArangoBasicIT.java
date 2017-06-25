@@ -1,8 +1,6 @@
 package org.springframework.data.arangodb.test.basic;
 
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.hamcrest.beans.HasPropertyWithValue;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +8,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.arangodb.repository.support.ArangoEntityInformation;
 import org.springframework.data.arangodb.repository.support.SimpleArangoRepository;
+import org.springframework.data.arangodb.support.ArangoDBFactory;
 import org.springframework.data.arangodb.support.ArangoTemplate;
+import org.springframework.data.arangodb.test.TestConfig;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -23,18 +23,19 @@ import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = TestConfig.class)
-public class ArangoRepositoryIT {
+public class ArangoBasicIT {
 	@Autowired
-	protected ArangoTemplate arangoTemplate;
+	private ArangoDBFactory databaseFactory;
 
 	@Before
 	public void init() {
-		arangoTemplate.dropDatabaseIfExists();
-		arangoTemplate.createDatabaseIfNotExists();
+		databaseFactory.dropDatabaseIfExists();
+		databaseFactory.createDatabaseIfNotExists();
 	}
 
 	@Test
 	public void createUser() {
+		ArangoTemplate arangoTemplate = new ArangoTemplate(databaseFactory);
 		SimpleArangoRepository<User> userRepository = new SimpleArangoRepository<User>(new ArangoEntityInformation<User>(User.class), arangoTemplate);
 		User user = new User("johndoe", "John Doe", LocalDate.parse("1991-11-12"));
 		userRepository.save(user);
@@ -52,6 +53,7 @@ public class ArangoRepositoryIT {
 
 	@Test
 	public void createListUsers() {
+		ArangoTemplate arangoTemplate = new ArangoTemplate(databaseFactory);
 		SimpleArangoRepository<User> userRepository = new SimpleArangoRepository<User>(new ArangoEntityInformation<User>(User.class), arangoTemplate);
 		List<User> users = new LinkedList<User>();
 		users.add(new User("johndoe", "John Doe", LocalDate.parse("1991-10-11")));
@@ -68,8 +70,10 @@ public class ArangoRepositoryIT {
 		assertThat(loaded, is(not(Matchers.<User>empty())));
 		assertThat(loaded.size(), is(2));
 	}
+
 	@Test
 	public void deleteUsers() {
+		ArangoTemplate arangoTemplate = new ArangoTemplate(databaseFactory);
 		SimpleArangoRepository<User> userRepository = new SimpleArangoRepository<User>(new ArangoEntityInformation<User>(User.class), arangoTemplate);
 		List<User> users = new LinkedList<User>();
 		users.add(new User("johndoe", "John Doe", LocalDate.parse("1991-10-11")));
