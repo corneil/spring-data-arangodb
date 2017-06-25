@@ -13,5 +13,7 @@ This module deals with support for [ArangoDB](https://www.arangodb.com).
 * ~~Implement @Query for AQL queries with and without named parameters.~~
 * Implement query from method names.
 * Implement Pageable and Sort support
+* XML Spring Configuration support
 * Support for operations on graph, vertices and edges
+* Update documentation.
 
