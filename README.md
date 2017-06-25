@@ -17,3 +17,19 @@ This module deals with support for [ArangoDB](https://www.arangodb.com).
 * Support for operations on graph, vertices and edges
 * Update documentation.
 
+
+## Testing
+
+In order to execute Integration test you will need a working Docker installation.
+The integration test uses Docker image named `arangodb:3.1`
+Execute the following:
+
+```bash
+./mvnw verify -P -no-int-test,int-test
+```
+## Maven Profiles
+
+The build adds 2 profiles on top of the inherited list from spring-data-build.
+
+* `no-int-test` - Activated by default to prevent execution of integration tests.
+* `int-test` - Enable the execution of integration tests.

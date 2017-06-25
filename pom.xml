@@ -210,9 +210,6 @@
 								<arangodb.port>${arangodb.port}</arangodb.port>
 								<arangodb.host>127.0.0.1</arangodb.host>
 							</systemPropertyVariables>
-							<includes>
-								<include>**/**/ArangoITCase.*</include>
-							</includes>
 						</configuration>
 						<goals>
 							<goal>integration-test</goal>
