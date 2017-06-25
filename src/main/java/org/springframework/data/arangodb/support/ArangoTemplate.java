@@ -20,19 +20,19 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ArangoTemplate implements ArangoOperations {
-	private static final Logger log = LoggerFactory.getLogger(ArangoTemplate.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoTemplate.class);
 
 	private Map<Class, ArangoEntityInformation> entityInformation = new ConcurrentHashMap<Class, ArangoEntityInformation>();
 
 	private ArangoDBFactory databaseFactory;
 
 	public ArangoTemplate(ArangoDBFactory databaseFactory) {
-		log.debug("ArangoTemplate:databaseFactory");
+		LOGGER.debug("ArangoTemplate:databaseFactory");
 		this.databaseFactory = databaseFactory;
 	}
 
 	public ArangoTemplate(final String databaseName, ArangoDB db) {
-		log.debug("ArangoTemplate:{}", databaseName);
+		LOGGER.debug("ArangoTemplate:{}", databaseName);
 		this.databaseFactory = new ArangoDBFactoryImpl(databaseName, db);
 	}
 
@@ -168,7 +168,7 @@ public class ArangoTemplate implements ArangoOperations {
 		Collection<CursorEntity.Warning> warnings = cursor.getWarnings();
 		if (warnings != null) {
 			for (CursorEntity.Warning warning : warnings) {
-				log.warn("findAll:{}:{}", warning.getCode(), warning.getMessage());
+				LOGGER.warn("findAll:{}:{}", warning.getCode(), warning.getMessage());
 			}
 		}
 	}
@@ -179,5 +179,12 @@ public class ArangoTemplate implements ArangoOperations {
 
 	public <T> void register(Class<T> cls, ArangoEntityInformation<T> info) {
 		entityInformation.put(cls, info);
+	}
+
+	@Override
+	public <T> Iterable<T> query(final Class<T> domainClass, final String queryString, final Map<String, Object> parameters) {
+		LOGGER.debug("query:{}:{}:{}", domainClass, queryString, parameters);
+		ArangoCursor<T> cursor = databaseFactory.getDatabase().query(queryString, parameters, null, domainClass);
+		return cursor.asListRemaining();
 	}
 }

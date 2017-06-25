@@ -1,5 +1,8 @@
 package org.springframework.data.arangodb.repository.support;
 
+import java.util.Collection;
+import java.util.Map;
+
 public interface ArangoOperations {
 	<T> long count(Class<T> domainClass);
 	<T> void delete(Class<T> domainClass, String id);
@@ -12,4 +15,5 @@ public interface ArangoOperations {
 	<T> T findOne(Class<T> domainClass, String id);
 	<T> T save(T entity);
 	<T> Iterable<T> save(Iterable<T> iterable);
+	<T> Iterable<T> query(Class<T> domainClass, String queryString, Map<String,Object> parameters);
 }

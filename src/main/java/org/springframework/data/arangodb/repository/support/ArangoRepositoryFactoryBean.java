@@ -8,7 +8,7 @@ import org.springframework.data.repository.core.support.RepositoryFactorySupport
 import org.springframework.util.Assert;
 
 public class ArangoRepositoryFactoryBean<T extends Repository<S, String>, S> extends RepositoryFactoryBeanSupport<T, S, String> {
-	private static final Logger log = LoggerFactory.getLogger(ArangoRepositoryFactoryBean.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoRepositoryFactoryBean.class);
 	private ArangoOperations operations;
 
 	public ArangoRepositoryFactoryBean(ArangoOperations operations) {

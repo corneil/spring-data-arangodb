@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -22,7 +23,7 @@ import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ArangoDBFactoryImpl implements ArangoDBFactory {
-	private static final Logger log = LoggerFactory.getLogger(ArangoDBFactoryImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBFactoryImpl.class);
 
 	public static final String ARANGODB = "arangodb.";
 
@@ -53,22 +54,22 @@ public class ArangoDBFactoryImpl implements ArangoDBFactory {
 	public ArangoDBFactoryImpl(final String databaseName, final ArangoDB db) {
 		this.databaseName = databaseName;
 		this.arangoDB = db;
-		log.debug("ArangoDBFactoryImpl:{}", databaseName);
+		LOGGER.debug("ArangoDBFactoryImpl:{}", databaseName);
 	}
 
 	public ArangoDBFactoryImpl(Properties properties) {
-		log.debug("ArangoDBFactoryImpl:{}", properties);
+		LOGGER.debug("ArangoDBFactoryImpl:{}", properties);
 		init(properties);
 	}
 
 	public ArangoDBFactoryImpl(String url) throws URISyntaxException {
-		log.debug("ArangoDBFactoryImpl:{}", url);
+		LOGGER.debug("ArangoDBFactoryImpl:{}", url);
 		URI uri = new URI(url);
 		init(uri);
 	}
 
 	public ArangoDBFactoryImpl(URI uri) {
-		log.debug("ArangoDBFactoryImpl:{}", uri);
+		LOGGER.debug("ArangoDBFactoryImpl:{}", uri);
 		init(uri);
 	}
 
@@ -77,7 +78,7 @@ public class ArangoDBFactoryImpl implements ArangoDBFactory {
 			try {
 				database.createCollection(collectionName);
 			} catch (ArangoDBException x) {
-				log.error("getCollection:{}", x.toString(), x);
+				LOGGER.error("getCollection:{}", x.toString(), x);
 			}
 			verifiedCollections.add(collectionName);
 		}
@@ -132,7 +133,7 @@ public class ArangoDBFactoryImpl implements ArangoDBFactory {
 				port = after;
 			}
 		}
-		log.debug("addHost:{}={}:{}", host, hostName, port);
+		LOGGER.debug("addHost:{}={}:{}", host, hostName, port);
 		if (hostName == null || port == null) {
 			throw new RuntimeException("arangodb.hosts form is hostname:port");
 		}
@@ -266,12 +267,12 @@ public class ArangoDBFactoryImpl implements ArangoDBFactory {
 			}
 		}
 		databaseName = stringBuilder.toString();
-		log.debug("setDatabaseName:{}:{}", name, databaseName);
+		LOGGER.debug("setDatabaseName:{}:{}", name, databaseName);
 	}
 
 	private void setParameter(final ArangoDB.Builder builder, final String name, final String value) {
 		if (value != null) {
-			log.debug("setParameter:{}={}", name, value);
+			LOGGER.debug("setParameter:{}={}", name, value);
 			if (USER.equalsIgnoreCase(name)) {
 				builder.user(value);
 			} else if (PASSWORD.equalsIgnoreCase(name)) {
@@ -292,13 +293,22 @@ public class ArangoDBFactoryImpl implements ArangoDBFactory {
 
 	private void setProtocol(final ArangoDB.Builder builder, final String protocolStr) {
 		Protocol protocol = null;
+		final String alternateProtocolStr = protocolStr.replace('+', '_');
 		for (Protocol p : Protocol.values()) {
-			if (p.name().equalsIgnoreCase(protocolStr)) {
+			if (p.name().equalsIgnoreCase(protocolStr) || p.name().equalsIgnoreCase(alternateProtocolStr)) {
 				protocol = p;
 			}
 		}
+		if (protocolStr.equals("http")) {
+			// TODO decide the default
+			protocol = Protocol.HTTP_JSON;
+		}
 		if (protocol == null) {
-			throw new RuntimeException(String.format("protocol must be one of %s not %s", Arrays.asList(Protocol.values()), protocolStr));
+			List<String> options = new LinkedList<String>();
+			for (Protocol p : Protocol.values()) {
+				options.add(p.name().toLowerCase().replace('_', '+'));
+			}
+			throw new RuntimeException(String.format("protocol must be one of %s not %s", options, protocolStr));
 		}
 		builder.useProtocol(protocol);
 	}

@@ -5,8 +5,10 @@ import org.springframework.data.arangodb.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends ArangoRepository<User> {
-	@Query("FOR u in User FILTER userId LIKE @userId RETURN u")
+	@Query("FOR u in User FILTER u.userId LIKE @userId RETURN u")
 	Iterable<User> findForUserIdLikeNamed(@Param("userId") String userId);
-	@Query("FOR u in User FILTER userId LIKE ? RETURN u")
+	@Query("FOR u in User FILTER u.userId LIKE ? RETURN u")
 	Iterable<User> findForUserIdLike(String userId);
+	@Query("FOR u in User FILTER u.userId == ? RETURN u")
+	User findByUserId(String userId);
 }

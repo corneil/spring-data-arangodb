@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 @EnableArangoRepositories(basePackages = {"org.springframework.data.arangodb.test.query"})
 @Import(TestConfig.class)
 public class TestQueryConfig {
-	@Bean
+	@Bean(name = "arangoTemplate")
 	@Autowired
 	public ArangoTemplate arangoTemplate(ArangoDBFactory dbFactory) {
 		return new ArangoTemplate(dbFactory);

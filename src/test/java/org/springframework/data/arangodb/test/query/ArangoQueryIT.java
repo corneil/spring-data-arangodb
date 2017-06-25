@@ -49,5 +49,13 @@ public class ArangoQueryIT {
 			loaded.add(user);
 		}
 		assertThat(loaded.size(), is(2));
+		User user = userRepository.findByUserId("johndoe");
+		assertThat(user, is(notNullValue()));
+		assertThat(user.getFullName(), is(equalTo("John Doe")));
+		user = userRepository.findByUserId("janedoe");
+		assertThat(user, is(notNullValue()));
+		assertThat(user.getFullName(), is(equalTo("Jane Doe")));
+		user = userRepository.findByUserId("123");
+		assertThat(user, is(nullValue()));
 	}
 }

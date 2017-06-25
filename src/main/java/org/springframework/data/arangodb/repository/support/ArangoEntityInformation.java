@@ -10,22 +10,14 @@ import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
 
-
 public class ArangoEntityInformation<T> extends AbstractEntityInformation<T, String> {
 	private static final Logger log = LoggerFactory.getLogger(ArangoEntityInformation.class);
-	public String getCollectionName() {
-		return collectionName;
-	}
 
 	private final String collectionName;
 
 	private final Class<T> domainClass;
 
 	private final Field idField;
-
-	public Class<T> getDomainClass() {
-		return domainClass;
-	}
 
 	public ArangoEntityInformation(Class<T> domainClass) {
 		super(domainClass);
@@ -45,17 +37,6 @@ public class ArangoEntityInformation<T> extends AbstractEntityInformation<T, Str
 			}
 		}
 		return domainClass.getSimpleName();
-	}
-
-	@Override
-	public String getId(T t) {
-		try {
-			idField.setAccessible(true);
-			return (String) idField.get(t);
-		} catch (IllegalAccessException e) {
-			log.error("getId:{},{}", t.getClass().getName(), e.toString(), e);
-		}
-		return null;
 	}
 
 	private static Field getIdField(Class cls) {
@@ -85,8 +66,37 @@ public class ArangoEntityInformation<T> extends AbstractEntityInformation<T, Str
 		return result;
 	}
 
+	public String getCollectionName() {
+		return collectionName;
+	}
+
+	public Class<T> getDomainClass() {
+		return domainClass;
+	}
+
+	@Override
+	public String getId(T t) {
+		if(idField!=null) {
+			try {
+				idField.setAccessible(true);
+				return (String) idField.get(t);
+			} catch (IllegalAccessException e) {
+				log.error("getId:{},{}", t.getClass().getName(), e.toString(), e);
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public Class<String> getIdType() {
 		return String.class;
+	}
+
+	public Field getIdField() {
+		return idField;
+	}
+
+	public String getIdFieldName() {
+		return idField != null ? idField.getName() : null;
 	}
 }
